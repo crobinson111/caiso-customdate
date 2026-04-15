@@ -193,6 +193,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   th:last-child { border-right: none; }
   td { padding: 6px 16px; border-bottom: 1px solid var(--border2); border-right: 1px solid var(--border2); text-align: right; }
   td:first-child { text-align: center; color: var(--muted); }
+  .td-date { text-align: left !important; font-size: 11px; white-space: nowrap; }
   td:last-child { border-right: none; }
   tr:last-child td { border-bottom: none; }
   tr:nth-child(even) td { background: var(--surface2); }
@@ -310,21 +311,17 @@ function renderTable(market, rows) {
   document.getElementById(market+'Count').textContent = rows.length + ' hourly rows';
   const div = document.getElementById(market+'Table');
   if (!rows.length) { div.innerHTML = '<div class="empty-state">NO DATA RETURNED</div>'; return; }
-  const multiDay = new Set(rows.map(r => r.date)).size > 1;
-  let lastDate = null, tbody = '';
+  let tbody = '';
   rows.forEach(r => {
-    if (multiDay && r.date !== lastDate) {
-      tbody += '<tr class="date-row"><td colspan="4">' + r.date + '</td></tr>';
-      lastDate = r.date;
-    }
     tbody += '<tr>'
+      + '<td class="td-date">' + r.date + '</td>'
       + '<td>' + (r.hour + 1) + '</td>'
       + '<td class="' + vc(r.avg) + '">' + fmt(r.avg) + '</td>'
       + '<td class="' + vc(r.min) + '">' + fmt(r.min) + '</td>'
       + '<td class="' + vc(r.max) + '">' + fmt(r.max) + '</td>'
       + '</tr>';
   });
-  div.innerHTML = '<table><thead><tr><th>Oper Hour</th><th>Avg ($/MWh)</th><th>Min</th><th>Max</th></tr></thead><tbody>' + tbody + '</tbody></table>';
+  div.innerHTML = '<table><thead><tr><th>Date</th><th>Oper Hour</th><th>Avg ($/MWh)</th><th>Min</th><th>Max</th></tr></thead><tbody>' + tbody + '</tbody></table>';
 }
 </script>
 </body>
