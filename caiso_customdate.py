@@ -51,6 +51,9 @@ def fetch_caiso_data(start_date, end_date, queryname, market_run_id, node):
         except Exception as e:
             print(f"[ERROR] {day_str}: {e}", flush=True)
         current += timedelta(days=1)
+        if current <= end:
+            import time
+            time.sleep(5)  # Avoid CAISO rate limiting between requests
     return results
 
 
@@ -315,7 +318,7 @@ function renderTable(market, rows) {
       lastDate = r.date;
     }
     tbody += '<tr>'
-      + '<td>' + r.hour + '</td>'
+      + '<td>' + (r.hour + 1) + '</td>'
       + '<td class="' + vc(r.avg) + '">' + fmt(r.avg) + '</td>'
       + '<td class="' + vc(r.min) + '">' + fmt(r.min) + '</td>'
       + '<td class="' + vc(r.max) + '">' + fmt(r.max) + '</td>'
