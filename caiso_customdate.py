@@ -194,6 +194,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   td { padding: 6px 16px; border-bottom: 1px solid var(--border2); border-right: 1px solid var(--border2); text-align: right; }
   td:first-child { text-align: center; color: var(--muted); }
   .td-date { text-align: left !important; font-size: 11px; white-space: nowrap; }
+  .td-wday { text-align: left !important; white-space: nowrap; }
   td:last-child { border-right: none; }
   tr:last-child td { border-bottom: none; }
   tr:nth-child(even) td { background: var(--surface2); }
@@ -311,17 +312,29 @@ function renderTable(market, rows) {
   document.getElementById(market+'Count').textContent = rows.length + ' hourly rows';
   const div = document.getElementById(market+'Table');
   if (!rows.length) { div.innerHTML = '<div class="empty-state">NO DATA RETURNED</div>'; return; }
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   let tbody = '';
   rows.forEach(r => {
+    const parts = r.date.split('-');
+    const yr2 = parts[0].slice(2);
+    const mnth = parseInt(parts[1]);
+    const day = parseInt(parts[2]);
+    const yymmdd = yr2 + parts[1] + parts[2];
+    const dt = new Date(r.date + 'T12:00:00');
+    const weekday = days[dt.getDay()];
     tbody += '<tr>'
-      + '<td class="td-date">' + r.date + '</td>'
+      + '<td class="td-date">' + yymmdd + '</td>'
+      + '<td>' + yr2 + '</td>'
+      + '<td>' + mnth + '</td>'
+      + '<td>' + day + '</td>'
+      + '<td class="td-wday">' + weekday + '</td>'
       + '<td>' + (r.hour + 1) + '</td>'
       + '<td class="' + vc(r.avg) + '">' + fmt(r.avg) + '</td>'
       + '<td class="' + vc(r.min) + '">' + fmt(r.min) + '</td>'
       + '<td class="' + vc(r.max) + '">' + fmt(r.max) + '</td>'
       + '</tr>';
   });
-  div.innerHTML = '<table><thead><tr><th>Date</th><th>Oper Hour</th><th>Avg ($/MWh)</th><th>Min</th><th>Max</th></tr></thead><tbody>' + tbody + '</tbody></table>';
+  div.innerHTML = '<table><thead><tr><th>Date</th><th>Yr</th><th>Mnth</th><th>Day</th><th>Week Day</th><th>Hr</th><th>Avg ($/MWh)</th><th>Min</th><th>Max</th></tr></thead><tbody>' + tbody + '</tbody></table>';
 }
 </script>
 </body>
